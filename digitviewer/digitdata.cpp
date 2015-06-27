@@ -78,9 +78,10 @@ bool DigitData::setFile(const QString &filename)
         digit_t digit;
         for(int i = 0; i < DigitPixels; ++i) {
             bool ok;
-            digit[i] = columns[i+ofs].toInt(&ok);
-            if(!ok || digit[i] < 0 || digit[i] > 255)
+            const int gray = columns[i+ofs].toInt(&ok);
+            if(!ok || gray < 0 || gray > 255)
                 return false;
+            digit[i] = gray;
         }
         pNewData->push_back(std::move(digit));
     }
