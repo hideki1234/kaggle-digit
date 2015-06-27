@@ -80,6 +80,13 @@ void DigitPane::setPage(int newOffset)
         m_digits[i] = m_data->getData(i + m_dataOffset);
     }
 
+    m_bLabels = m_data->isLabelAvailable();
+    if(m_bLabels) {
+        for(int i = 0; i < count; ++i) {
+            m_labels[i] = m_data->getLabel(i + m_dataOffset);
+        }
+    }
+
     update();
     showOffsets();}
 

@@ -18,12 +18,15 @@ private:
     std::unique_ptr< std::vector<digit_t> > m_pData;
     std::unique_ptr< std::vector<char> > m_pLabels;
     int m_numberOfData;
+    bool m_bLabel;
 
 public:
     explicit DigitData(QObject *parent = 0);
 
     int numberOfData() const {return m_numberOfData;}
     const digit_t & getData(int idx) const;
+    bool isLabelAvailable() const {return m_bLabel;}
+    char getLabel(int idx) const;
     bool setFile(const QString & filename);
         // true: succeeded; false: failed
 

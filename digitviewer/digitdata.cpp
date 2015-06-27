@@ -5,7 +5,8 @@
 #include "digitdata.h"
 
 DigitData::DigitData(QObject *parent)
-    : QObject(parent), m_pData(nullptr), m_pLabels(nullptr), m_numberOfData(0)
+    : QObject(parent), m_pData(nullptr), m_pLabels(nullptr)
+    , m_numberOfData(0), m_bLabel(false)
 {
 }
 
@@ -13,6 +14,12 @@ const digit_t & DigitData::getData(int idx) const
 {
     assert(0 <= idx && idx < numberOfData());
     return (*m_pData)[idx];
+}
+
+char DigitData::getLabel(int idx) const
+{
+    assert(0 <= idx && idx < numberOfData());
+    return (*m_pLabels)[idx];
 }
 
 bool DigitData::setFile(const QString &filename)
@@ -89,6 +96,7 @@ bool DigitData::setFile(const QString &filename)
     m_pData = std::move(pNewData);
     m_pLabels = std::move(pNewLabels);
     m_numberOfData = static_cast<int>(m_pData->size());
+    m_bLabel = bTrain;
 
     emit dataChanged();
 
