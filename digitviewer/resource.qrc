@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Actions-left.png</file>
+        <file>Actions-right.png</file>
+    </qresource>
+</RCC>
