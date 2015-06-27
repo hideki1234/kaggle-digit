@@ -1,4 +1,5 @@
 #include <QFileDialog>
+#include <QUrl>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -25,7 +26,11 @@ void MainWindow::onOpen()
     if(filename.isNull())
         return;
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    if(m_data->setFile(filename))
+    if(m_data->setFile(filename)) {
         ui->labelTotalDigits->setText(QString::number(m_data->numberOfData()));
+        QUrl fullpath(filename);
+        setWindowTitle(QString(tr("Digit Viewer - %1")).arg(fullpath.fileName()));
+        ui->statusBar->showMessage((m_data->isLabelAvailable() ? tr("Training data set") : tr("Test data set")));
+    }
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
 }
