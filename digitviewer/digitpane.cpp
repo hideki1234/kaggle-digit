@@ -69,6 +69,9 @@ void DigitPane::setPage(int newOffset)
 {
     for(auto & digit : m_digits)
         digit.fill(0xFF);
+    if(m_bLabels)
+        for(auto & label : m_labels)
+            label = ' ';
 
     m_dataOffset = newOffset;
     int count = digitsPerPage;
