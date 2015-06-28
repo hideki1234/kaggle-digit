@@ -91,7 +91,8 @@ void DigitPane::setPage(int newOffset)
     }
 
     update();
-    showOffsets();}
+    showOffsets();
+}
 
 void DigitPane::showOffsets()
 {
