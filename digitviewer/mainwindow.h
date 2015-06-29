@@ -22,6 +22,9 @@ public:
 private slots:
     void onOpen();
 
+public slots:
+    void onOffsetEdited();
+
 private:
     Ui::MainWindow *ui;
 };

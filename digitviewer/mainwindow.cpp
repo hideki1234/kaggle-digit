@@ -34,3 +34,8 @@ void MainWindow::onOpen()
     }
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
 }
+
+void MainWindow::onOffsetEdited()
+{
+    ui->buttonPrevious->setFocus();
+}
