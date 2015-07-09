@@ -54,3 +54,13 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
+
+# vi
+*.swp
+
+# project specific
+# Kaggle data store
+/input
+
+# result csv
+/pyneural/*.csv
