@@ -183,10 +183,14 @@ def predict(Theta1, Theta2, X):
     return p
 
 
+def normalizeX(X):
+    return X / 255.0
+
+
 def main():
     # loading training data
     data = pd.read_csv('../input/train.csv')
-    X_tr = data.values[:, 1:].astype(float)
+    X_tr = normalizeX(data.values[:, 1:].astype(float))
     y_tr = data.values[:, 0]
 
     # training neural network
@@ -199,7 +203,7 @@ def main():
 
     # loadint test data
     data = pd.read_csv('../input/test.csv')
-    X_test = data.values.astype(float)
+    X_test = normalizeX(data.values.astype(float))
 
     print('Predicting...')
     y_test = predict(Theta1, Theta2, X_test)
