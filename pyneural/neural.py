@@ -105,15 +105,11 @@ def costFunction(packed, shapes, X, y, lambda_):
     Delta3 = H_theta - Y
     Delta2 = (Theta2.T.dot(Delta3) * A2 * (1 - A2))[1:,:]
 
-    A2T = A2.T
-    for i in range(A2T.shape[0]):
-        Theta2_grad += Delta3[:,[i]].dot(A2T[[i]])
+    Theta2_grad = Delta3.dot(A2.T)
     Theta2_reg = np.hstack((np.zeros((Theta2.shape[0], 1)), Theta2[:, 1:]))
     Theta2_grad += lambda_ * Theta2_reg
 
-    A1T = Xt.T
-    for i in range(A1T.shape[0]):
-        Theta1_grad += Delta2[:, [i]].dot(A1T[[i]])
+    Theta1_grad = Delta2.dot(Xt.T)
     Theta1_reg = np.hstack((np.zeros((Theta1.shape[0], 1)), Theta1[:, 1:]))
     Theta1_grad += lambda_ * Theta1_reg
 
