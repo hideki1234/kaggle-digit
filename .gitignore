@@ -1,3 +1,4 @@
+# C++ ignores
 # C++ objects and libs
 
 *.slo
@@ -33,3 +34,23 @@ build-digitviewer-*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+
+# Python igores
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
