@@ -81,7 +81,6 @@ def costFunction(packed, shapes, X, y, lambda_):
     '''
     Theta1, Theta2 = unpackMats(packed, shapes)
     m = X.shape[0]
-    num_labels = Theta2.shape[0]
     Theta1_grad = np.zeros_like(Theta1)
     Theta2_grad = np.zeros_like(Theta2)
     a_0 = np.ones(m)
@@ -119,68 +118,81 @@ def costFunction(packed, shapes, X, y, lambda_):
     return J, packMats(Theta1_grad, Theta2_grad)
 
 
-def training(X, y, num_hidden, lambda_, maxiter, initial_Theta1=None, initial_Theta2=None):
+class digit_recognizer(object):
     '''
-    Training a neural network model with one hidden layer
-    Arguments:
-        X:          training data
-        y:          training label
         lambda_:    regularization parameter
+        num_hidden: number of units in hidden layer
         maxiter:    maximum iterations
         initial_Theta1: initial weight matrix for input layer to hidden layer
                         if None, random initial parameter is generated
         initial_Theta2: initial weight matrix for hidden layer to output layer
                         if None, random initial parameter is generated
-    Return:
-        a tuple of weight matrices
     '''
-    # initializing parameters
-    if initial_Theta1 is None:
-        initial_Theta1 = randInitializeWeights(num_input, num_hidden)
-    if initial_Theta2 is None:
-        initial_Theta2 = randInitializeWeights(num_hidden, num_labels)
-    initial_packed = packMats(initial_Theta1, initial_Theta2)
-    shapes = packedShapes(initial_Theta1, initial_Theta2)
 
-    # now train it
-    costFunc = lambda n : costFunction(n, shapes, X, y, lambda_)
-    res = minimize(costFunc, initial_packed, jac=True, method='CG',
-            options={'maxiter':maxiter, 'disp':True})
+    def __init__(self, lambda_ = 1.0, num_hidden=25, maxiter=50,
+            initial_Theta1=None, initial_Theta2=None):
+        self._lambda = lambda_
+        self._num_hidden = num_hidden
+        self._maxiter = maxiter
+        self._initial_Theta1 = initial_Theta1
+        self._initial_Theta2 = initial_Theta2
 
-    # the result is packed; unpack it before return
-    return unpackMats(res.x, shapes)
+    def fit(self, X, y):
+        '''
+        Training a neural network model with one hidden layer
+        Arguments:
+            X:  training data
+            y:  training label
+        Return:
+            self
+        '''
+        # initializing parameters
+        initial_Theta1 = self._initial_Theta1
+        initial_Theta2 = self._initial_Theta2
+        if initial_Theta1 is None:
+            initial_Theta1 = randInitializeWeights(num_input, self._num_hidden)
+        if initial_Theta2 is None:
+            initial_Theta2 = randInitializeWeights(self._num_hidden, num_labels)
+        initial_packed = packMats(initial_Theta1, initial_Theta2)
+        shapes = packedShapes(initial_Theta1, initial_Theta2)
 
+        # now train it
+        costFunc = lambda n : costFunction(n, shapes, X, y, self._lambda)
+        res = minimize(costFunc, initial_packed, jac=True, method='CG',
+                options={'maxiter':self._maxiter, 'disp':True})
 
-def predict(Theta1, Theta2, X):
-    '''
-    Predicts the label of an input given a trained neural network
-    Arguments:
-        Theta1: Trained weight matrix for input layer to hidden layer
-        Theta2: Trained weight matrix for hidden layer to output layer
-        X:      data
-    Return:
-        the predicted label
-    '''
-    m = X.shape[0]
-    num_labels = Theta2.shape[0]
-    p = np.empty((m), dtype=int)  # return value
-    a_0 = np.array([1])
+        # the result is packed; unpack it before return
+        self._Theta1, self._Theta2 = unpackMats(res.x, shapes)
 
-    for i, a1 in enumerate(X):
+        return self
+
+    def predict(self, X):
+        '''
+        Predicts the label of an input given a trained neural network
+        Arguments:
+            X:  data
+        Return:
+            the predicted label
+        '''
+        m = X.shape[0]
+        p = np.empty((m), dtype=int)  # return value
+        a_0 = np.ones(m)
+
         # input to hidden layer
-        a1 = np.hstack((a_0, a1)).T
-        z2 = Theta1.dot(a1)
-        a2 = sigmoid(z2)
+        A1 = np.vstack((a_0, X.T))
+        Z2 = self._Theta1.dot(A1)
+        A2 = sigmoid(Z2)
 
         # hidden to output layer
-        a2 = np.hstack((a_0, a2)).T
-        z3 = Theta2.dot(a2)
-        a3 = sigmoid(z3)
+        A2 = np.vstack((a_0, A2))
+        Z3 = self._Theta2.dot(A2)
+        A3 = sigmoid(Z3)
 
-        # find the index of the max prediction
-        p[i] = np.argmax(a3)
+        for i, a in enumerate(A3.T):
+            # find the index of the max prediction
+            p[i] = np.argmax(a)
 
-    return p
+        return p
 
 
 def normalizeX(X):
@@ -198,15 +210,16 @@ def main():
     lambda_ = 1     # regularization parameter
     maxiter = 50    # max number of iterations
     print('Training: size of hidden layer={}, lambda={}, maximum iterations={}'
-            .format(num_hidden, lambda_, maxiter))
-    Theta1, Theta2 = training(X_tr, y_tr, num_hidden, lambda_, maxiter)
+            .format(nh, lm, mi))
+    recognizer = digit_recognizer(lambda_=lambda_, num_hidden=num_hidden, maxiter=maxiter)
+    recognizer.fit(X_tr, y_tr)
 
     # loadint test data
     data = pd.read_csv('../input/test.csv')
     X_test = normalizeX(data.values.astype(float))
 
     print('Predicting...')
-    y_test = predict(Theta1, Theta2, X_test)
+    y_test = recognizer.predict(X_test)
 
     # save the result
     with open('result.csv', 'w') as f_result:
