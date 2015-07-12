@@ -137,6 +137,14 @@ class digit_recognizer(object):
         self._initial_Theta1 = initial_Theta1
         self._initial_Theta2 = initial_Theta2
 
+    def set_params(self, **params):
+        for k in params:
+            if k == 'lambda_':
+                self._lambda = params[k]
+            else:
+                raise TypeError('Unsupported param:"{}"'.format(k))
+        return self
+
     def fit(self, X, y):
         '''
         Training a neural network model with one hidden layer
