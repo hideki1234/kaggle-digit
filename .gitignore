@@ -63,4 +63,4 @@ coverage.xml
 /input
 
 # result csv
-/pyneural/*.csv
+/py*/*.csv
