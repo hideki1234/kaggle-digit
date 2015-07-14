@@ -8,7 +8,9 @@ Neural Networks: digit recognition - back-propagation
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.cross_validation import cross_val_score
 
 def main():
     # loading training data
@@ -17,24 +19,30 @@ def main():
     X_tr = data.values[:, 1:].astype(float)
     y_tr = data.values[:, 0]
 
+    scores = list()
+    scores_std = list()
+
     print('Start learning...')
-    n_trees = 25
-    recognizer = RandomForestClassifier(n_trees)
-    recognizer.fit(X_tr, y_tr)
+    n_trees = [10, 15, 20, 25, 30, 40, 50, 70, 100]
+    for n_tree in n_trees:
+        print(n_tree)
+        recognizer = RandomForestClassifier(n_tree)
+        score = cross_val_score(recognizer, X_tr, y_tr)
+        scores.append(np.mean(score))
+        scores_std.append(np.std(score))
 
-    # loading test data
-    print('Loading test data')
-    data = pd.read_csv('../input/test.csv')
-    X_test = data.values.astype(float)
+    sc_array = np.array(scores)
+    std_array = np.array(scores_std)
+    print('Score: ', sc_array)
+    print('Std  : ', std_array)
 
-    print('Predicting...')
-    y_test = recognizer.predict(X_test)
-
-    # save the result
-    with open('result.csv', 'w') as f_result:
-        f_result.write('"ImageId","Label"\n')
-        for i, y in enumerate(y_test, 1):
-            f_result.write('{},"{}"\n'.format(i,y))
+    #plt.figure(figsize=(4,3))
+    plt.plot(n_trees, scores)
+    plt.plot(n_trees, sc_array + std_array, 'b--')
+    plt.plot(n_trees, sc_array - std_array, 'b--')
+    plt.ylabel('CV score')
+    plt.xlabel('# of trees')
+    plt.show()
 
 
 if __name__ == '__main__':
