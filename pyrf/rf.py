@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Neural Networks: digit recognition - back-propagation
+Randomforest - plot: # of trees - accuracy
 
 @Author: Hideki Ikeda
 @Date 7/11/15
@@ -42,6 +42,7 @@ def main():
     plt.plot(n_trees, sc_array - std_array, 'b--')
     plt.ylabel('CV score')
     plt.xlabel('# of trees')
+    plt.savefig('cv_trees.png')
     plt.show()
 
 
